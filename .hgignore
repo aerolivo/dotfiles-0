@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-vim/plugged/
-vim/colours/shades-of-purple
-=======
+# Use shell-style glob syntax
+syntax: glob
+
 # Compiled Python files
 *.pyc
 
@@ -16,4 +15,3 @@ Thumbs.db
 # Files that might appear on external disks
 .Spotlight-V100
 .Trashes
->>>>>>> 3fbceb469cc52f021b11f4a0d335c4362366cac4
