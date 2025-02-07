@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =8
+let g:netrw_dirhist_8='/home/arentol/.vim/plugged/vim-snippets/snippets'
+let g:netrw_dirhist_7='/home/arentol/.vim/colours/shades-of-purple.vim'
+let g:netrw_dirhist_6='/home/arentol/.vim'
+let g:netrw_dirhist_5='/home/arentol/.vim/autoload'
+let g:netrw_dirhist_4='/home/arentol/.ssh'
+let g:netrw_dirhist_3='/home/arentol/.vim'
+let g:netrw_dirhist_2='/home/arentol/.vim/autload'
+let g:netrw_dirhist_1='/home/arentol/.vim'

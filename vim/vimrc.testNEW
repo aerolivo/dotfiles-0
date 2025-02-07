@@ -1,0 +1,235 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                                                                        
+"     █ █ █ █▄ ▄█ █▀▄ ▄▀▀   ▄▀▄ ██▀ █▀▄ ▄▀▄
+"     ▀▄▀ █ █ ▀ █ █▀▄ ▀▄▄   █▀█ █▄▄ █▀▄ ▀▄▀
+"         
+"     Edited:     Andres Olivo
+"     Date:       2023.08.16
+"     Source:     https://www.freecodecamp.org/news/vimrc-configuration-guide-customize-your-vim-editor/
+"    
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" To reload .vimrc, run :so %
+" To install a plugin, run :PlugInstall 
+
+" Basic Settings -------------------------------------------------------------
+
+set nocompatible                " Disable vi compatibility for better Vim features
+set exrc                        " Allow local .vimrc files
+filetype on                     " Enable file type detection
+filetype plugin on              " Enable file type-specific plugins
+filetype indent on              " Enable indentation based on file type
+syntax on                       " Enable syntax highlighting
+set number                      " Show line numbers
+"set relativenumber              " Uncomment to enable relative line numbers
+set mouse=a                     " Enable mouse support
+set cursorline                  " Highlight the current line
+set cursorcolumn                " Highlight the current column
+set shiftwidth=4                " Number of spaces per indentation level
+set tabstop=4                   " Number of spaces for a tab
+set expandtab                   " Use spaces instead of tabs
+set nobackup                    " Disable backup files
+set scrolloff=10                " Keep 10 lines visible when scrolling
+set nowrap                      " Disable line wrapping
+set incsearch                   " Incremental search that shows matches as you type
+set ignorecase                  " Ignore case while searching
+set smartcase                   " Override 'ignorecase' if search contains capitals
+set showcmd                     " Show incomplete commands in the status line
+set noshowmode                  " Disable showing mode (already shown in the status line)
+set showmatch                   " Highlight matching brackets or parentheses
+set hlsearch                    " Highlight all matches during search
+set clipboard=unnamedplus       " Use system clipboard
+set history=500                 " Increase command history
+set wildmenu                    " Enable wildmenu for tab completion
+set wildmode=list:longest       " Show list of options with longest match for completion
+
+" Ignored files for wildmenu completion
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
+
+" Autocmds for specific file types
+au BufRead,BufNewFile *.vimrc,*.vim set filetype=vim
+au BufRead,BufNewFile kitty.conf set filetype=conf
+
+" WORD PROCESSOR MODE -------------------------------------------------------
+" Custom function for a distraction-free writing experience
+
+function! WordProcessorMode()
+    map j gj                     " Soft wrapping for vertical movement
+    map k gk
+
+    setlocal textwidth=80        " Set line width to 80 characters
+    setlocal smartindent         " Enable smart indentation
+    setlocal tabstop=2 shiftwidth=2 " Set tab width and shiftwidth to 2 spaces
+    setlocal noexpandtab         " Use tabs instead of spaces (word processor style)
+
+    setlocal spell spelllang=en_gb,es " Enable spell check in English and Spanish
+    set thesaurus+=~/.vim/spell/mthesaur.txt " Add thesaurus file
+    
+    " Map Ctrl-L for quick spell correction
+    inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u 
+endfunction
+
+" Command to enable word processor mode
+command! WP call WordProcessorMode()
+
+" PLUGINS --------------------------------------------------------------------
+" Plugin management using vim-plug
+call plug#begin('~/.vim/plugged')
+
+" Linting and syntax checking
+Plug 'dense-analysis/ale'
+
+" File explorer
+Plug 'preservim/nerdtree'
+
+" LaTeX plugin
+Plug 'lervag/vimtex'
+
+" Snippet engine and snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
+" Distraction-free writing
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+
+" Git integration
+Plug 'tpope/vim-fugitive'
+
+" Commenting utility
+Plug 'tpope/vim-commentary'
+
+" Themes and color schemes
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'Rigellute/shades-of-purple.vim'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+Plug 'dracula/vim', { 'as': 'dracula' }
+
+" Status line and UI enhancements
+Plug 'itchyny/lightline.vim'
+Plug 'TaDaa/vimade'
+
+call plug#end()
+
+" MAPPINGS -------------------------------------------------------------------
+" Set the comma as the leader key
+let mapleader = ","
+
+" Quick access to last cursor position
+nnoremap <leader>\ ``
+
+" Print the current file
+nnoremap <silent> <leader>p :%w !lp<CR>
+
+" Exit insert mode quickly with 'jj'
+inoremap jj <Esc>
+
+" Map spacebar to ':'
+nnoremap <space> :
+
+" Insert new line without entering insert mode
+nnoremap o o<esc>
+nnoremap O O<esc>
+
+" Center search results vertically
+nnoremap n nzz
+nnoremap N Nzz
+
+" F5 to run Python script
+nnoremap <f5> :w<CR>:!clear<CR>:!python3 %<CR>
+
+" Split window navigation
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" Resize splits with arrow keys
+noremap <C-Up> <C-w>+
+noremap <C-Down> <C-w>-
+noremap <C-Left> <C-w>>
+noremap <C-Right> <C-w><
+
+" Clipboard mappings for yanking and pasting
+vnoremap <Leader>y "*y
+noremap  <Leader>p "*p
+vnoremap <Leader>Y "+y
+noremap  <Leader>P "+p
+nnoremap <Leader>Y "+yy
+
+" Toggle relative line numbers
+nnoremap <Leader>rn :set relativenumber!<CR>
+
+" NERDTree toggling with F3
+nnoremap <F3> :NERDTreeToggle<CR>
+
+" Ignore specific file types in NERDTree
+let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
+
+" VIMTEX --------------------------------------------------------------------
+" LaTeX plugin settings for compiling and viewing
+let g:vimtex_view_method = 'zathura'        " Set PDF viewer to Zathura
+let g:vimtex_compler_method = 'latexrun'    " Use latexrun for compilation
+
+" COLOUR SCHEMES -------------------------------------------------------------
+" Enable true colors for better color scheme support
+if (has("termguicolors"))
+    set termguicolors
+endif
+
+" Default color scheme
+colorscheme shades_of_purple
+
+" Clear the background color in terminal
+hi Normal ctermbg=NONE guibg=NONE
+
+" STATUS LINE ---------------------------------------------------------------
+" Status line customization using lightline
+let g:lightline = {
+    \ 'colorscheme': 'deus',
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]   
+    \ },
+    \ 'component_function': {
+    \   'gitbranch': 'FugitiveHead'
+    \ },
+    \ 'component': {
+    \   'filename': '%F',
+    \ }
+    \ }
+
+" CAESAR CIPHER FUNCTION -----------------------------------------------------
+" Function to toggle Caesar cipher encoding/decoding
+function! CaesarCipherToggle() range
+    let shift = 3
+    let pattern = '\%(\l\|\u\)'
+    let text = getline(a:firstline, a:lastline)
+    let result = []
+
+    for line in text
+        let encodedLine = ''
+        for i in range(len(line))
+            let char = line[i]
+            if char =~ pattern
+                let isUpper = char =~ '\u'
+                let base = isUpper ? char2nr('A') : char2nr('a')
+                let offset = (char2nr(char) - base + shift) % 26
+                let encodedChar = nr2char(base + offset)
+                let encodedLine .= encodedChar
+            else
+                let encodedLine .= char
+            endif
+        endfor
+        call add(result, encodedLine)
+    endfor
+    call setline(a:firstline, result)
+endfunction
+
+" Define command to toggle Caesar cipher
+command! -range=% CaesarToggleE <line1>,<line2>call CaesarCipherToggle()
+
+" Map Caesar cipher to encode and decode
+vnoremap <Leader>ce :CaesarToggleE<CR>
+vnoremap <Leader>cd :CaesarToggleD<CR>
+

@@ -1,0 +1,267 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"                                                     
+"     █ █ █ █▄ ▄█ █▀▄ ▄▀▀   ▄▀▄ ██▀ █▀▄ ▄▀▄
+"     ▀▄▀ █ █ ▀ █ █▀▄ ▀▄▄   █▀█ █▄▄ █▀▄ ▀▄▀
+"         
+"     Edited:     Andres Olivo
+"     Date:       2023.08.16
+"     Source:     https://www.freecodecamp.org/news/vimrc-configuration-guide-customize-your-vim-editor/
+"    
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Reload .vimrc with :so%
+" Install plugins with :PlugInstall
+
+" Disable compatibility with vi
+set nocompatible                
+
+" Enable Vim-specific features
+set exrc
+filetype on
+filetype plugin on
+filetype indent on
+syntax on
+
+" Line numbers and appearance
+set number
+" set relativenumber              " Uncomment to enable relative line numbers
+set cursorline
+set cursorcolumn
+set mouse=a
+
+" Indentation settings
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set nobackup
+
+" Scrolling and search settings
+set scrolloff=10
+set nowrap
+set incsearch
+set ignorecase
+set smartcase
+set showcmd
+set noshowmode
+set showmatch
+set hlsearch
+
+" Clipboard and history
+set clipboard=unnamedplus
+set history=500
+
+" Wildmenu settings for command-line completion
+set wildmenu
+set wildmode=list:longest
+
+" File type-specific settings
+au BufRead,BufNewFile *.vimrc,*.vim set filetype=vim
+au BufRead,BufNewFile kitty.conf set filetype=conf
+
+" Ignore specific file types for wildmenu
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
+
+" Folding instructions
+"   zo: open a single fold under the cursor
+"   zc: close the fold under the cursor 
+"   zR: open all folds
+"   zM: close all folds
+
+" WORD PROCESSOR MODE ----------------------------------------------------- {{{
+
+" Configure Vim for word processing
+function! WordProcessorMode()
+    " Movement changes
+    map j gj
+    map k gk
+
+    " Text formatting
+    setlocal textwidth=80
+    setlocal smartindent
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+    setlocal noexpandtab
+
+    " Spelling and thesaurus
+    setlocal spell spelllang=en_gb,es
+    set thesaurus+=~/.vim/spell/mthesaur.txt 
+    set complete+=s
+    inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u 
+endfunction
+
+" Command to activate Word Processor Mode
+command! WP call WordProcessorMode()
+
+" }}}
+
+" PLUGINS -------------------------------------------------------------------- {{{
+
+" Plugin manager initialization
+call plug#begin('~/.vim/plugged')
+
+" List of plugins
+Plug 'dense-analysis/ale'
+Plug 'preservim/nerdtree'
+Plug 'lervag/vimtex'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-commentary'
+Plug 'ghifarit53/tokyonight-vim'
+Plug 'Rigellute/shades-of-purple.vim'
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'itchyny/lightline.vim'
+Plug 'TaDaa/vimade'
+
+" Finalize plugin manager configuration
+call plug#end()
+
+" }}}
+
+" MAPPINGS ------------------------------------------------------------------- {{{
+
+" Leader key configuration
+let mapleader = ","
+
+" General mappings
+nnoremap <leader>\ ``  " Jump back to the last cursor position
+nnoremap <silent> <leader>p :%w !lp<CR>  " Print the current file (Linux)
+inoremap jj <Esc>  " Quickly exit insert mode
+nnoremap <space> :  " Type : in command mode
+nnoremap o o<esc>  " Open a new line below and exit insert mode
+nnoremap O O<esc>  " Open a new line above and exit insert mode
+nnoremap n nzz  " Center cursor vertically during a search
+nnoremap N Nzz
+nnoremap <f5> :w <CR>:!clear <CR>:!python3 % <CR>  " Run Python script
+nnoremap <c-j> <c-w>j  " Navigate split windows
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+noremap <c-up> <c-w>+  " Resize split windows
+noremap <c-down> <c-w>-
+noremap <c-left> <c-w>> 
+noremap <c-right> <c-w><
+
+" Clipboard mappings
+vnoremap <Leader>y "*y
+noremap  <Leader>p "*p
+vnoremap <Leader>Y "+y
+noremap  <Leader>P "+p
+nnoremap <Leader>Y "+yy
+
+" Toggle relative number
+nnoremap <Leader>rn :set relativenumber! <CR>
+
+" NERDTree mappings
+nnoremap <F3> :NERDTreeToggle<cr>
+let NERDTreeIgnore=['\.git$', '\.jpg$', '\.mp4$', '\.ogg$', '\.iso$', '\.pdf$', '\.pyc$', '\.odt$', '\.png$', '\.gif$', '\.db$']
+
+" }}}
+
+" VIMSCRIPT ----------------------------------------------------------------- {{{
+
+" Filetype-specific settings
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+
+autocmd Filetype html setlocal tabstop=2 shiftwidth=2 expandtab
+autocmd Filetype md setlocal tabstop=4 shiftwidth=4
+autocmd Filetype tex setlocal tabstop=2 shiftwidth=2 expandtab textwidth=90
+
+" Enable undofile if Vim version is >= 7.3
+if version >= 703
+    set undodir=~/.vim/backup
+    set undofile
+    set undoreload=10000
+endif
+
+" Cursorline display settings
+augroup cursor_off
+    autocmd!
+    autocmd WinLeave * set nocursorline nocursorcolumn
+    autocmd WinEnter * set cursorline cursorcolumn
+augroup END
+
+" GUI version settings
+if has('gui_running')
+    set background=dark
+    set guifont=Monospace\ Regular\ 12
+    set guioptions-=T  " Hide toolbar
+    set guioptions-=L  " Hide left-side scrollbar
+    set guioptions-=r  " Hide right-side scrollbar
+    set guioptions-=m  " Hide menu bar
+    set guioptions-=b  " Hide bottom scrollbar
+    nnoremap <F4> :if &guioptions=~#'mTr'<Bar>
+        \set guioptions-=mTr<Bar>
+        \else<Bar>
+        \set guioptions+=mTr<Bar>
+        \endif<CR>
+endif
+
+" Caesar Cipher Functions -------------------------------------------------- {{{
+
+" Function to shift characters for Caesar cipher
+function! ShiftChar(char, shift)
+    let lcase = 'abcdefghijklmnopqrstuvwxyz'
+    let ucase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    let is_upper = a:char =~ '\u'
+    let alphabet = is_upper ? ucase : lcase
+    let shifted_index = (stridx(alphabet, a:char) + a:shift) % 26
+    if shifted_index < 0
+        let shifted_index += 26
+    endif
+    return strcharpart(alphabet, shifted_index, 1)
+endfunction
+
+" Function to toggle Caesar cipher encoding/decoding on selected text
+function! ToggleCaesarCipher()
+    let save_cursor = getcurpos()
+    normal! gvy
+    let text = @x
+    let decoded = substitute(text, '\a', '\=ShiftChar(submatch(0), -3)', 'g')
+    if decoded == text
+        let encoded = substitute(text, '\a', '\=ShiftChar(submatch(0), 3)', 'g')
+        let result = encoded
+    else
+        let result = decoded
+    endif
+    normal! gv"_d
+    let @x = result
+    normal! P
+    call setpos('.', save_cursor)
+endfunction
+
+" Commands to encode and decode text with Caesar cipher
+command! -range=% CaesarToggleE <line1>,<line2>call CaesarCipherToggle()
+command! -range=% CaesarToggleD <line1>,<line2>call CaesarCipherDecode()
+
+" Caesar cipher encoding and decoding mapping
+xnoremap <Leader>c :<C-u>CaesarToggle<CR>
+" }}}
+
+" RANDOM FIXES ------------------------------------------------------------- {{{
+
+" Error handling and backup options
+set errorbells
+set visualbell
+set t_vb=
+set backupskip+=/tmp/*,/private/tmp/*
+set directory=~/.vim/tmp
+set undodir=~/.vim/undodir
+set backupdir=~/.vim/backupdir
+
+" }}}
+
+" CONCLUSION --------------------------------------------------------------- {{{
+
+" Final configuration comments
+"   - Always check Vim documentation for further customizations
+"   - Regularly update plugins for best performance
+
+" }}}
+
